@@ -1,171 +1,131 @@
-clear
-i=0
-declare -a nama
-declare -a npm
-declare -a jur
+#!/bin/sh
 
+function menu(){
+   echo "PROGRAM MENGHITUNG"
+   echo "Pilih salah satu menu dibawah :"
+   echo "1. Luas Permukaan Balok"
+   echo "2. Luas Permukaan Tabung"
+   echo "3. Luas Permukaan Kerucut"
+   echo "4. Mengurutkan Nilai Ketiga Luas Ascending dan Descending"
+   echo "5. Keluar"
+   echo "==========================="
+}
+
+function lp_balok(){
+   echo "============================"
+   echo -n "Masukkan Panjang : "
+   read p
+   echo -n "Masukkan Lebar : "
+   read l
+   echo -n "Masukkan Tinggi : "
+   read t
+   let h1=2*p*l
+   let h2=2*p*t
+   let h3=2*l*t
+   let lpb=h1+h2+h3
+   echo "Luas Permukaan Balok : $lpb"
+}
+
+function lp_tabung(){
+   echo "============================"
+   echo -n "Masukkan Jari Jari : "
+   read j
+   echo -n "Masukkan Tinggi : "
+   read t
+   let phi=314/100
+   let lpt=2*phi*$j*$t*$(($j+$t))
+   echo "Luas Permukaan Tabung : $lpt"
+
+}
+
+function lp_kerucut(){
+   echo "============================"
+   echo -n "Masukkan Jari Jari : "
+  read j
+   echo -n "Masukkan Sisi Miring : "
+   read sm
+   let phi=314/100
+    let lpk=phi*$j*$(($j+$sm))
+    echo "Luas Permukaan Kerucut : $lpk"
+}
+
+function sorting_asc(){
+   data[0]=$lpb
+   data[1]=$lpt
+   data[2]=$lpk
+
+   for (( i = 0; i < 3; i++ )); do
+      for (( j=i+1; j < 3; j++ )); do
+         if [[ ${data[i]} -gt ${data[j]} ]]; then
+            temp=${data[i]}
+            data[$i]=${data[j]}
+            data[$j]=$temp
+         fi
+      done
+   done
+
+   for (( i = 0; i < 3; i++ )); do
+      echo ${data[i]}
+   done
+}
+
+function sorting_des(){
+   data[0]=$lpb
+   data[1]=$lpt
+   data[2]=$lpk
+
+   for (( i = 0; i < 3; i++ )); do
+      for (( j=i+1; j < 3; j++ )); do
+         if [[ ${data[i]} -lt ${data[j]} ]]; then
+            temp=${data[i]}
+            data[$i]=${data[j]}
+            data[$j]=$temp
+         fi
+      done
+   done
+
+   for (( i = 0; i < 3; i++ )); do
+      echo ${data[i]}
+   done
+}
 while :;
 do
- echo -e "Menu : \n\n1. Input\n2. View\n3. Search\n4. Delete\n5. Exit\n"
-  echo -n "Masukkan pilihan : "
-  read pilih
 
-  if (("$pilih" == 1));   # INPUT DATA
-  then
-    clear
-    echo -n "Masukkan Nama    : "
-    read nama[$i]
-    echo -n "Masukkan NPM     : "
-    read npm[$i]
-    echo -n "Masukkan Jurusan : "
-    read jur[$i]
-    i=`expr $i + 1`
+menu
+echo -n "Masukkan Pilihan : "
+read pilih
 
-  if (("$i" >= 2))
-  then
-   for (( g=0; g<i-1; g++ ))
-   do
-       if (( "${npm[$i-1]}" == "${npm[g]}" ))
-    then
-          echo -e "\nNPM sudah ada!\nMasukan NPM lain!"
-     read
-     unset nama[$i-1]
-     unset jur[$i-1]
-     unset npm[$i-1]
-     i=`expr $i - 1`
-     break
-       fi
-   done
-  fi
-    clear
-
-  elif (("$pilih" == 2));   # TAMPILKAN DATA
-  then
-    if (( i == 0 ))
-    then
+if [ $pilih -eq 1 ]
+   then
+      lp_balok
       clear
-      echo "Tidak ada data yang dapat ditampilkan"
-      read
+
+elif [ $pilih -eq 2 ]
+   then
+      lp_tabung
       clear
-    else
+
+elif [ $pilih -eq 3 ]
+   then
+      lp_kerucut
+     clear
+
+elif [ $pilih -eq 4 ]
+   then
       clear
-      echo -e "Data yang telah dimasukkan : \n"
+      echo "Luas Permukaan Balok : $lpb"
+      echo "Luas Permukaan Tabung : $lpt"
+      echo "Luas Permukaan Kerucut : $lpk"
+      echo "============================="
+      echo "Pengurutan Ascending"
+      sorting_asc
+      echo "============================="
+      echo "Pengurutan Descending"
+      sorting_des
+      echo "============================="
+else
+   clear
+   exit
+fi
 
-      for (( q=0; q<i;q++  ))
-      do
-        echo -e "Data ke $[q+1]\nNama    : ${nama[q]}\nNPM     : ${npm[q]}\nJurusan : ${jur[q]}\n"
-      done
-      read
-      clear
-    fi
-
-  elif (("$pilih" == 3));   # CARI DATA
-  then
-    if (( i == 0))
-    then
-      clear
-      echo "Tidak ada data yang dapat dicari"
-      read
-      clear
-    else
-      clear
-         echo -n "Masukkan NPM mahasiswa yang ingin dicari : "
-         read cari
-
-         k=0
-         while (($cari != ${npm[$k]}))
-         do
-        k=`expr $k + 1`
-         done
-
-      if (($cari == ${npm[$k]}));
-      then
-        echo -e "\nNama    : ${nama[k]}\nNPM     : ${npm[k]}\nJurusan : ${jur[k]}"
-
-      else
-        clear
-        echo -e "Data tidak ditemukan"
-      fi
-      read
-         clear
-    fi
-
-  elif (("$pilih" != 4 && "$pilih" != 2 && "$pilih" != 1 && "$pilih" != 3       && "$pilih" != 5));   # APABILA MEMBERIKAN MASUKAN SELAIN 1-5
-  then
-    echo "Pilihan tidak valid"
-    read
-    clear
-
- elif (( "$pilih" == 4 ));   # HAPUS DATA
- then
-  if (( i == 0))
-    then
-      clear
-      echo "Tidak ada data yang dapat dihapus"
-      read
-      clear
-    else
-      clear
-   echo -e "Data yang telah dimasukkan : \n"
-      for (( q=0; q<i;q++  ))
-      do
-        echo -e "Data ke $[q+1]\nNama    : ${nama[q]}\nNPM     : ${npm[q]}\nJurusan : ${jur[q]}\n"
-      done
-
-   echo -n "Masukkan NPM mahasiswa yang ingin dihapus : "
-         read cari
-
-         k=0
-         while (($cari != ${npm[$k]}))
-         do
-        k=`expr $k + 1`
-         done
-
-      if (($cari == ${npm[$k]}));
-      then
-        unset nama[k]
-    unset npm[k]
-    unset jur[k]
-
-    if [[ -z ${npm[k]} ]]
-    then
-     if (($i == 1))
-     then
-      i=0
-
-     elif (($i == 2))
-     then
-      for ((f=$k; f<i; f++))
-      do
-       nama[f]=${nama[$f+1]}
-       npm[f]=${npm[$f+1]}
-       jur[f]=${jur[$f+1]}
-      done
-      i=`expr $i - 1`
-
-     elif (($i > 2))
-     then
-      if [[ -n ${npm[$k-1]} ]]
-      then
-       for (( d=$k; d<i; d++ ))
-       do
-        nama[d]=${nama[$d+1]}
-        npm[d]=${npm[$d+1]}
-        jur[d]=${jur[$d+1]}
-       done
-      fi
-      i=`expr $i - 1`
-     fi
-    fi
-      else
-        clear
-        echo -e "Data tidak ditemukan"
-      fi
-      read
-         clear
-    fi
-
-  else    # KELUAR PROGAM
-    exit
-  fi
 done
